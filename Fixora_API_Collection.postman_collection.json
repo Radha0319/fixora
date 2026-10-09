@@ -1,0 +1,472 @@
+{
+  "info": {
+    "_postman_id": "fixora-api-collection-v1",
+    "name": "Fixora API Collection",
+    "description": "Comprehensive Postman test collection for Fixora full-stack platform covering Auth, Customer Verification, Provider Face/Document Verification, Admin Approvals, AI Troubleshooting Chatbot, Provider Search & Ranking, Service Requests, Ratings, and Notifications.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "customerToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "providerToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@fixora.com\",\n  \"password\": \"AdminPassword@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Priya Patel\",\n  \"email\": \"priya.patel@test.com\",\n  \"mobileNumber\": \"9876543299\",\n  \"password\": \"PriyaPass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/customer",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register", "customer"]
+            }
+          }
+        },
+        {
+          "name": "Register Provider",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Amit Electronics\",\n  \"email\": \"amit.tech@test.com\",\n  \"mobileNumber\": \"9876543288\",\n  \"password\": \"AmitPass@123\",\n  \"location\": {\n    \"city\": \"Bangalore\",\n    \"state\": \"Karnataka\"\n  },\n  \"categories\": [\"TV\", \"Laptop\"],\n  \"expertise\": [\"TV Backlight Repair\", \"Laptop Screen Replacement\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register/provider",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register", "provider"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/auth/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Customer Verification",
+      "item": [
+        {
+          "name": "Get Customer Profile & Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/customers/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Submit Aadhaar Verification",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "aadhaarNumber", "value": "987654321098", "type": "text" },
+                { "key": "document", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/customers/verification",
+              "host": ["{{baseUrl}}"],
+              "path": ["customers", "verification"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Provider Verification",
+      "item": [
+        {
+          "name": "Get Provider Private Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{providerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/providers/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Submit Face Registration (Webcam Capture)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{providerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"faceImage\": \"data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD...\",\n  \"livenessData\": {\n    \"score\": 0.96\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/face-registration",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "face-registration"]
+            }
+          }
+        },
+        {
+          "name": "Upload Technical / ID Documents",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{providerToken}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "documentType", "value": "technical_certificate", "type": "text" },
+                { "key": "document", "type": "file", "src": "" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/documents",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "documents"]
+            }
+          }
+        },
+        {
+          "name": "Update Expertise & Device Categories",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{providerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"categories\": [\"TV\", \"AC\"],\n  \"expertise\": [\"TV Backlight Repair\", \"AC Drain Pipe & Deep Cleaning Service\"],\n  \"experienceYears\": 6,\n  \"serviceArea\": [\"Bangalore\", \"Indiranagar\"]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/providers/expertise",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "expertise"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Admin Oversight & Approvals",
+      "item": [
+        {
+          "name": "Get System Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/admin/stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "stats"]
+            }
+          }
+        },
+        {
+          "name": "Get Customers For Review",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{adminToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/admin/customers?status=PENDING",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "customers"],
+              "query": [{ "key": "status", "value": "PENDING" }]
+            }
+          }
+        },
+        {
+          "name": "Approve Customer Verification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"APPROVE\",\n  \"remarks\": \"Aadhaar document validated against national standards.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/customers/:customerId/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "customers", ":customerId", "review"]
+            }
+          }
+        },
+        {
+          "name": "Approve Provider Verification",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{adminToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"APPROVE\",\n  \"remarks\": \"Face biometrics and trade certification verified.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/providers/:providerId/review",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "providers", ":providerId", "review"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. AI Troubleshooting Chatbot",
+      "item": [
+        {
+          "name": "Get 11 Device Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/chat/categories",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Troubleshoot Query - Safe Case (AC Leak)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceCategory\": \"AC\",\n  \"brand\": \"Voltas\",\n  \"model\": \"1.5 Ton Split\",\n  \"userDescription\": \"My AC is leaking water from the front indoor unit onto the floor.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat"]
+            }
+          }
+        },
+        {
+          "name": "Troubleshoot Query - Dangerous Hardware Case (Microwave Sparks)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"deviceCategory\": \"Microwave Oven\",\n  \"brand\": \"LG\",\n  \"userDescription\": \"Microwave is sparking and high voltage capacitor is humming.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["chat"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Provider Search & Matching",
+      "item": [
+        {
+          "name": "Search Verified Providers (Ranked)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/providers/search?deviceCategory=AC&city=Bangalore",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", "search"],
+              "query": [
+                { "key": "deviceCategory", "value": "AC" },
+                { "key": "city", "value": "Bangalore" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "View Provider Public Profile",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/providers/:providerId",
+              "host": ["{{baseUrl}}"],
+              "path": ["providers", ":providerId"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "7. Service Requests & Reviews",
+      "item": [
+        {
+          "name": "Book Service Request",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"providerId\": \"<PROVIDER_ID>\",\n  \"deviceCategory\": \"AC\",\n  \"brand\": \"Daikin\",\n  \"problemDescription\": \"AC leaking water continuously.\",\n  \"serviceDomain\": \"AC Drain Pipe & Deep Cleaning Service\",\n  \"estimatedCost\": 650,\n  \"serviceAddress\": {\n    \"street\": \"12 Residency Road\",\n    \"city\": \"Bangalore\",\n    \"state\": \"Karnataka\",\n    \"pincode\": \"560025\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/service-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-requests"]
+            }
+          }
+        },
+        {
+          "name": "Get My Service Requests",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/service-requests",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-requests"]
+            }
+          }
+        },
+        {
+          "name": "Update Request Status (Provider Accept / Complete)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{providerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"newStatus\": \"ACCEPTED\",\n  \"remarks\": \"Technician assigned and scheduled visit.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/service-requests/:requestId/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["service-requests", ":requestId", "status"]
+            }
+          }
+        },
+        {
+          "name": "Submit Customer Rating & Review",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{customerToken}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"serviceRequestId\": \"<COMPLETED_REQUEST_ID>\",\n  \"rating\": 5,\n  \"review\": \"Outstanding service! Cleaned the AC drain hose and fixed leak in 30 minutes.\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ratings",
+              "host": ["{{baseUrl}}"],
+              "path": ["ratings"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "8. Notifications",
+      "item": [
+        {
+          "name": "Get My Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/notifications",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications"]
+            }
+          }
+        },
+        {
+          "name": "Mark All As Read",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{customerToken}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/notifications/read-all",
+              "host": ["{{baseUrl}}"],
+              "path": ["notifications", "read-all"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
